@@ -1,0 +1,8 @@
+# Set default behavior to automatically handle text files
+* text=auto
+
+# Explicitly force LF for these file types
+*.json    text eol=lf
+*.js      text eol=lf
+*.md      text eol=lf
+*.css     text eol=lf
