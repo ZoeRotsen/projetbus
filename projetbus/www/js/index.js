@@ -1,3 +1,10 @@
+// Configuration API
+const API_CONFIG = {
+  baseUrl: "http://10.253.166.177:3000/api", // Remplacez par l'IP de votre serveur
+  interval: 30000, // 30 secondes
+  idBus: 1, // ID du bus - À adapter selon votre besoin
+};
+
 // Variables globales
 let isTracking = false;
 let watchId = null;
@@ -143,7 +150,6 @@ function updateStatus(text, isActive) {
   statusText.style.color = isActive ? "#4CAF50" : "#666";
 }
 
-
 // Afficher un message
 function showMessage(text, type) {
   const messageBox = document.getElementById("messageBox");
@@ -153,4 +159,46 @@ function showMessage(text, type) {
   setTimeout(() => {
     messageBox.classList.remove("show");
   }, 3000);
+}
+
+// Envoyer les données au serveur
+function sendDataToServer() {
+  if (!currentPosition) {
+    console.log("Aucune position à envoyer");
+    return;
+  }
+
+  const data = {
+    idBus: API_CONFIG.idBus,
+    longitude: currentPosition.coords.longitude,
+    latitude: currentPosition.coords.latitude,
+    dateEnvoi: new Date().toISOString(),
+  };
+
+  // Utilisation de cordova-plugin-advanced-http
+  cordova.plugin.http.setDataSerializer("json");
+
+  cordova.plugin.http.post(
+    `${API_CONFIG.baseUrl}/gps`,
+    data,
+    {
+      "Content-Type": "application/json",
+    },
+    function (response) {
+      // Succès
+      console.log("Données envoyées avec succès");
+      console.log("Réponse:", response.data);
+      showMessage("Données envoyées ✓", "success");
+    },
+    function (error) {
+      // Erreur
+
+      alert(error.error);
+
+      console.error("Erreur réseau:", error);
+      console.error("Status:", error.status);
+      console.error("Message:", error.error);
+      showMessage("Erreur réseau", "error");
+    }
+  );
 }
