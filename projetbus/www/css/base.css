@@ -1,0 +1,99 @@
+
+body, html {
+    height: 100%;
+}
+.full-height {
+    height: 100%;
+}
+.center-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.logo {
+    width: 150px;
+    margin-bottom: 30px;
+}
+
+/* Contenu principal */
+#content {
+    margin-left: 220px;
+    padding: 20px;
+}
+
+.bus-card {
+    margin-bottom: 15px;
+}
+
+/* Bouton cœur battant */
+.btn-heart {
+    background-color: #FF8C42; /* orange sobre */
+    color: #fff;
+    border: none;
+    font-weight: bold;
+    animation: heartbeat 1.2s infinite;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    transition: background-color 0.3s;
+}
+
+.btn-heart:hover {
+    background-color: #FFA451; /* léger survol */
+}
+
+@keyframes heartbeat {
+    0%, 100% {
+        transform: scale(1);
+    }
+    25% {
+        transform: scale(1.05);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    75% {
+        transform: scale(1.05);
+    }
+}
+
+/* Sidebar */
+#sidebar {
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 220px;
+    background-color: #FF8C42;
+    color: white;
+    padding-top: 20px;
+}
+
+#sidebar a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 12px 20px;
+    transition: background 0.2s;
+}
+
+#sidebar a:hover {
+    background-color: #FFA451;
+}
+
+.sidebar-list .list-group-item {
+    background-color: #FF8C42; /* orange */
+    color: white;
+    border: none;
+    transition: all 0.3s;
+}
+
+/* Hover : fond blanc, texte noir */
+.sidebar-list .list-group-item:hover {
+    background-color: white;
+    color: black;
+}
+
+.bg-orange {
+    background-color: #FF7A00 !important;
+    color: white !important;
+}
