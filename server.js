@@ -48,7 +48,7 @@ app.get('/api/gps', async (req, res) => {
     }
 });
 
-// Récupérer la liste de tous les arrêts
+// Récupérer la liste de tous les bus
 app.get('/api/bus', async (req, res) => {
     try {
         const [rows] = await db.query("SELECT * FROM Bus");
@@ -89,39 +89,70 @@ app.get('/api/bus/:idBus/arrets', async (req, res) => {
     }
 });
 
-// Ajouter ou modifier une entrée dans Selectionner
-// body: { idUtilisateur, idArret, actif }
-app.post('/api/selectionner', async (req, res) => {
+
+// Récupérer les arrêts surveillés d'un user
+// header: { idUtilisateur }
+app.get('/api/surveiller/:idUtilisateur', async (req, res) => {
     try {
-        const { idUtilisateur, idArret, actif } = req.body;
-        await db.query(`
-            INSERT INTO Selectionner (idUtilisateur, idArret, actif)
-            VALUES (?, ?, ?)
-            ON DUPLICATE KEY UPDATE actif = ?
-        `, [idArret, idUtilisateur, actif, actif]);
-        res.json({ success: true });
+        const idUtilisateur = req.params.idUtilisateur;
+
+        const [rows] = await db.query(`
+            SELECT ArretBus.id AS idArret, ArretBus.nomArret, ArretBus.longitude, ArretBus.latitude, Bus.id AS idBus, Bus.nomBus, Surveiller.actif
+            FROM Surveiller
+            JOIN ArretBus ON Surveiller.idArret = ArretBus.id
+            JOIN Bus ON Surveiller.idBus = Bus.id
+            WHERE idUtilisateur = ?
+        `, [idUtilisateur]);
+        res.json(rows);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Erreur selectionner" });
+        res.status(500).json({ error: "Erreur récupération arrêts surveillés" });
     }
 });
 
-// Ajouter ou modifier une entrée dans Surveiller
-// body: { idUtilisateur, idBus, actif }
+
+// Modifier une entrée dans Surveiller
+// header: { idUtilisateur, idBus, idArret }
+app.patch('/api/surveiller/:idUtilisateur/:idBus/:idArret', async (req, res) => {
+    try {
+        const { idUtilisateur, idBus, idArret } = req.params;
+        const { actif } = req.body; // 1 ou 0
+
+        await db.query(`
+            UPDATE Surveiller
+            SET actif = ?
+            WHERE idUtilisateur = ? AND idBus = ? AND idArret = ?
+        `, [actif, idUtilisateur, idBus, idArret]);
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Erreur mise à jour surveiller" });
+    }
+});
+
+
+// Ajouter une entrée dans Surveiller
+// body: { idUtilisateur, idBus, idArret, actif }
 app.post('/api/surveiller', async (req, res) => {
     try {
-        const { idUtilisateur, idBus, actif } = req.body;
+        const { idUtilisateur, idBus, idArret, actif } = req.body;
+
         await db.query(`
-            INSERT INTO Surveiller (idUtilisateur, idBus, actif)
-            VALUES (?, ?, ?)
-            ON DUPLICATE KEY UPDATE actif = ?
-        `, [idBus, idUtilisateur, actif, actif]);
+            INSERT INTO Surveiller (idUtilisateur, idBus, idArret, actif)
+            VALUES (?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE 
+                actif = VALUES(actif)
+        `, [idUtilisateur, idBus, idArret, actif]);
+
         res.json({ success: true });
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Erreur surveiller" });
     }
 });
+
 
 
 // Lancement du serveur
