@@ -1,15 +1,11 @@
-// =============================
+
 // Configuration API
-// =============================
 const API_CONFIG = {
-  baseUrl: "http://10.20.23.171:3000/api",
-  idBus: 1,
+  baseUrl: "http://10.40.56.177:3000/api",
+  idBus: 2,
   interval: 5000, // 5s
 };
 
-// =============================
-// Variables globales
-// =============================
 let isTracking = false;
 let intervalId = null;
 
@@ -17,36 +13,33 @@ let intervalId = null;
 let gpxPoints = [];
 let gpxIndex = 0;
 
-// =============================
-// Cordova Ready
-// =============================
+
 document.addEventListener("deviceready", onDeviceReady, false);
 
 function onDeviceReady() {
-  loadGPX(); // Charge le GPX dès le lancement
+  loadGPX();
 
   document.getElementById("gpsToggle").addEventListener("change", toggleGPS);
 }
 
-// =============================
+
 // Charger le fichier GPX depuis www/data/
-// =============================
+
 function loadGPX() {
   fetch("data/S01_vers_Darboussier.gpx")
     .then((response) => response.text())
     .then((xmlText) => {
       parseGPX(xmlText);
-      showMessage("Trace GPX chargée (" + gpxPoints.length + " points)", "success");
+      showMessage("Tracé GPX chargé points)", "success");
     })
     .catch((err) => {
-      console.error("Erreur chargement GPX", err);
-      showMessage("Impossible de charger le GPX", "error");
+      console.error("Erreur chargement du fichier GPX", err);
+      showMessage("Impossible de charger le fichier GPX", "error");
     });
 }
 
-// =============================
-// Parser le GPX (XML → tableau JS)
-// =============================
+
+// Conversion du  GPX (de XML à un tableau JS)
 function parseGPX(gpxText) {
   const parser = new DOMParser();
   const xml = parser.parseFromString(gpxText, "application/xml");
@@ -85,7 +78,7 @@ function toggleGPS(event) {
 function startTracking() {
   if (isTracking) return;
   if (gpxPoints.length === 0) {
-    showMessage("Aucun GPX chargé", "error");
+    showMessage("Aucun fichier GPX chargé", "error");
     return;
   }
 
@@ -127,7 +120,7 @@ function stopTracking() {
 
   resetDisplay();
 
-  showMessage("Simulation arrêtée", "info");
+  showMessage("Simulation GPS arrêtée", "info");
 }
 
 //Formatage de la date
@@ -165,7 +158,7 @@ function sendGPXPoint(point) {
     { "Content-Type": "application/json" },
     function (response) {
       console.log("Point envoyé");
-      showMessage("Données envoyées ✓", "success");
+      showMessage("Données envoyées", "success");
     },
     function (error) {
       console.error("Erreur:", error);
