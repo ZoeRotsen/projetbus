@@ -32,7 +32,7 @@ function onDeviceReady() {
 // Charger le fichier GPX depuis www/data/
 // =============================
 function loadGPX() {
-  fetch("data/TrajetG09.gpx")
+  fetch("data/S01_vers_Darboussier.gpx")
     .then((response) => response.text())
     .then((xmlText) => {
       parseGPX(xmlText);
